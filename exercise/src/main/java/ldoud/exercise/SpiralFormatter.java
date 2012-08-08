@@ -14,7 +14,13 @@ package ldoud.exercise;
  */
 public class SpiralFormatter {
 	
-	private int[][] spiral;
+	// It is possible that some cells will be null even after filling in the spiral.
+	// Using the wrapper class makes it easier to differentiate 
+	// from the "zero" cell and cells that don't have values yet.
+	private Integer[][] spiral;
+	
+	// Used to print out the spiral.
+	private String formatPattern;
 	
 	// Represents the path taken to spiral out of the center.
 	public enum Direction {
@@ -32,7 +38,7 @@ public class SpiralFormatter {
 		}		
 		
 		/**
-		 * Controls the next direction in the spiral.
+		 * Determines the next direction in the spiral.
 		 * @return East, South, West then North (it wraps back to East from North)
 		 */
 		public Direction getNext() {
@@ -40,8 +46,8 @@ public class SpiralFormatter {
 		}
 		
 		/**
-		 * Controls the previous direction in the spiral.
-		 * @return East, South, West then North (it wraps back to East from North)
+		 * Determines the previous direction in the spiral.
+		 * @return North, West, South then East (it wraps back to North from East)
 		 */
 		public Direction getPrevious() {		
 			// Avoid the mod of -1 by adding the length of the array to ordinal.
@@ -58,38 +64,37 @@ public class SpiralFormatter {
 	}
 	
 	public SpiralFormatter(int max) {		
+		int columnWidth = max % 10;
+		formatPattern = "%"+columnWidth+"s";
+		
 		// Adding one to maxNumber because printing starts at zero.
 		int numberOfColumns = (int)Math.ceil(Math.sqrt(max + 1));		
 		// 1f is necessary so a remainder will be generated.
 		int numberOfRows = (int)Math.ceil((max + 1f) / numberOfColumns);
-		spiral = new int[numberOfRows][numberOfColumns];
+		spiral = new Integer[numberOfRows][numberOfColumns];
 		
-		// Default starting location to center cell
-		int centerRow = Math.round(numberOfRows / 2f) - 1;
-		int centerColumn = Math.round(numberOfColumns / 2f) - 1;
-		
-		// Start with zero at the center
-		spiral[centerRow][centerColumn] = 0;
+		// Set the starting location to "zero" cell.
+		int currentRow = Math.round(numberOfRows / 2f) - 1;
+		int currentColumn = Math.round(numberOfColumns / 2f) - 1;
+		spiral[currentRow][currentColumn] = new Integer(0);
 		int nextNumber = 1;
 		
-		// Spiral east, south, west and north
-		int currentRow = centerRow;
-		int currentColumn = centerColumn;
+		// Spiral east, south, west and north until the max number is reached.
 		Direction currentDirection = Direction.EAST;
 		while(nextNumber <= max) {
 			int nextRow = currentRow + currentDirection.getRowModifer();
 			int nextColumn = currentColumn + currentDirection.getColumnModifier();				
-			int nextCellValue = spiral[nextRow][nextColumn];
+			Integer nextCellValue = spiral[nextRow][nextColumn];
 			
-			if (nextCellValue == 0 && (nextRow != centerRow || nextColumn != centerColumn)) {
-				spiral[nextRow][nextColumn] = nextNumber;
+			if (nextCellValue == null) {
+				spiral[nextRow][nextColumn] = new Integer(nextNumber);
 				
 				// Advance row, column and number tracking variables.
 				currentRow = nextRow;
 				currentColumn = nextColumn;
 				nextNumber += 1;
 				
-				// Attempt to change directions next time
+				// Attempt to change directions next time.
 				currentDirection = currentDirection.getNext();
 			}
 			else {
@@ -99,20 +104,37 @@ public class SpiralFormatter {
 		}
 	}
 	
-	public void print() {
-		StringBuffer output = new StringBuffer();
+	public void print() {		
 		for(int row=0; row < spiral.length; row++) {
 			for(int column=0; column < spiral[row].length; column++) {
-				output.append(spiral[row][column]);
-				output.append(" ");
+				Object valueToPrint = spiral[row][column];
+				if (valueToPrint == null) {
+					valueToPrint = "";
+				}
+				System.out.printf(formatPattern, valueToPrint);
 			}
-			System.out.println(output);
-			output = new StringBuffer();
+			System.out.printf("%n");
 		}
 	}
 	
+	private static void printUsage() {
+		System.out.println("usage: java ldoud.exercise.SpiralFormatter IntegerGreaterThanZero");
+	}
+	
 	public static void main(String[] args) {
-		SpiralFormatter printer = new SpiralFormatter(24);
-		printer.print();
+		if (args.length == 1) {
+			try {
+				int maxNumber = Integer.parseInt(args[0]);
+				
+				// This will be skipped if the program arg isn't an integer.
+				SpiralFormatter printer = new SpiralFormatter(maxNumber);
+				printer.print();				
+			} catch (NumberFormatException notAnInteger) {
+				printUsage();
+			}
+		}
+		else {
+			printUsage();
+		}
 	}
 }
