@@ -168,7 +168,7 @@ public class SpiralFormatter {
 	 * Tell the user how the program is run.
 	 */
 	private static void printUsage() {
-		System.out.println("usage: java ldoud.exercise.SpiralFormatter Integer");
+		System.out.println("usage: java ldoud.exercise.SpiralFormatter <Integer>");
 	}
 	
 	public static void main(String[] args) {
