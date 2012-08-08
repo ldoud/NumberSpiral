@@ -78,11 +78,14 @@ public class SpiralFormatter {
 	
 	/**
 	 * Create a spiral from zero to the desired number that can be printed.
-	 * @param max The last number contained in the spiral.
+	 * @param lastNumber The last number contained in the spiral.
 	 */
-	public SpiralFormatter(int max) {		
-		int columnWidth = (""+max).length() + 1;
+	public SpiralFormatter(int lastNumber) {		
+		int columnWidth = (""+lastNumber).length() + 1;
 		formatPattern = "%"+columnWidth+"s";
+		
+		// Allow for negative lastNumber.
+		int max = Math.abs(lastNumber);
 		
 		// Adding one to maxNumber because printing starts at zero.
 		int numberOfColumns = (int)Math.ceil(Math.sqrt(max + 1));		
@@ -96,9 +99,16 @@ public class SpiralFormatter {
 		spiral[currentRow][currentColumn] = new Integer(0);
 		int nextNumber = 1;
 		
-		// Spiral east, south, west and north until the max number is reached.
+		// Allow for the a negative last number.
+		if (lastNumber < 0) {
+			nextNumber = -1;
+		}
+		
+		// Initial direction will be East.
 		Direction currentDirection = Direction.EAST;
-		while(nextNumber <= max) {
+		
+		// Allow for nextNumber to be negative.
+		while(Math.abs(nextNumber) <= max) {
 			int nextRow = currentRow + currentDirection.getRowModifer();
 			int nextColumn = currentColumn + currentDirection.getColumnModifier();				
 			Integer nextCellValue = spiral[nextRow][nextColumn];
@@ -110,7 +120,14 @@ public class SpiralFormatter {
 				// Advance row, column and number tracking variables.
 				currentRow = nextRow;
 				currentColumn = nextColumn;
-				nextNumber += 1;
+				
+				// Allow for the a negative last number.
+				if (lastNumber >= 0) {
+					nextNumber += 1;	
+				}
+				else {
+					nextNumber -= 1;
+				}				
 				
 				// Attempt to change directions next time.
 				currentDirection = currentDirection.getNext();
@@ -140,10 +157,18 @@ public class SpiralFormatter {
 	}
 	
 	/**
+	 * Used for testing.
+	 * @return The data structure holding the ordered numbers.
+	 */
+	Integer[][] getSpiral() {
+		return spiral;
+	}
+	
+	/**
 	 * Tell the user how the program is run.
 	 */
 	private static void printUsage() {
-		System.out.println("usage: java ldoud.exercise.SpiralFormatter IntegerGreaterThanZero");
+		System.out.println("usage: java ldoud.exercise.SpiralFormatter Integer");
 	}
 	
 	public static void main(String[] args) {
