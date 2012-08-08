@@ -32,6 +32,11 @@ public class SpiralFormatter {
 		private int rowModifier;
 		private int columnModifier;
 		
+		/**
+		 * Set of row/column modifiers that move a direction in a 2d array.
+		 * @param rowMod The value added to the row to move in this direction.
+		 * @param colMod The value added to the column to move in this direction.
+		 */
 		private Direction(int rowMod, int colMod) {
 			rowModifier = rowMod;
 			columnModifier = colMod;
@@ -50,19 +55,31 @@ public class SpiralFormatter {
 		 * @return North, West, South then East (it wraps back to North from East)
 		 */
 		public Direction getPrevious() {		
-			// Avoid the mod of -1 by adding the length of the array to ordinal.
+			// Avoid an index less than zero by adding the length enum before subtracting 1.
 			return values()[(ordinal() + values().length -1) % values().length];  
 		}
 		
+		/**
+		 * Provides direction to row index that points a 2 dimensional array.
+		 * @return Add this to a row index to advance in this direction.
+		 */
 		public int getRowModifer() {
 			return rowModifier;
 		}
 		
+		/**
+		 * Provides direction to column index that points a 2 dimensional array.
+		 * @return Add this to a column index to advance in this direction.
+		 */
 		public int getColumnModifier() {
 			return columnModifier;
 		}
 	}
 	
+	/**
+	 * Create a spiral from zero to the desired number that can be printed.
+	 * @param max The last number contained in the spiral.
+	 */
 	public SpiralFormatter(int max) {		
 		int columnWidth = max % 10;
 		formatPattern = "%"+columnWidth+"s";
@@ -104,6 +121,9 @@ public class SpiralFormatter {
 		}
 	}
 	
+	/**
+	 * Prints from zero to the desired number in spiral format.
+	 */
 	public void print() {		
 		for(int row=0; row < spiral.length; row++) {
 			for(int column=0; column < spiral[row].length; column++) {
@@ -117,6 +137,9 @@ public class SpiralFormatter {
 		}
 	}
 	
+	/**
+	 * Tell the user how the program is run.
+	 */
 	private static void printUsage() {
 		System.out.println("usage: java ldoud.exercise.SpiralFormatter IntegerGreaterThanZero");
 	}
@@ -126,7 +149,7 @@ public class SpiralFormatter {
 			try {
 				int maxNumber = Integer.parseInt(args[0]);
 				
-				// This will be skipped if the program arg isn't an integer.
+				// This will be skipped if the program argument isn't an integer.
 				SpiralFormatter printer = new SpiralFormatter(maxNumber);
 				printer.print();				
 			} catch (NumberFormatException notAnInteger) {
