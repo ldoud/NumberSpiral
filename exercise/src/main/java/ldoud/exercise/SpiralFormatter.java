@@ -81,7 +81,7 @@ public class SpiralFormatter {
 	 * @param max The last number contained in the spiral.
 	 */
 	public SpiralFormatter(int max) {		
-		int columnWidth = max % 10;
+		int columnWidth = (""+max).length() + 1;
 		formatPattern = "%"+columnWidth+"s";
 		
 		// Adding one to maxNumber because printing starts at zero.
@@ -103,6 +103,7 @@ public class SpiralFormatter {
 			int nextColumn = currentColumn + currentDirection.getColumnModifier();				
 			Integer nextCellValue = spiral[nextRow][nextColumn];
 			
+			// If the cell has no value then set it.
 			if (nextCellValue == null) {
 				spiral[nextRow][nextColumn] = new Integer(nextNumber);
 				
@@ -114,6 +115,7 @@ public class SpiralFormatter {
 				// Attempt to change directions next time.
 				currentDirection = currentDirection.getNext();
 			}
+			// The cell already has a value.
 			else {
 				// Haven't passed the inner loop of the spiral yet.
 				currentDirection = currentDirection.getPrevious();
